@@ -22,3 +22,15 @@ npm run deploy
 ```bash
 npx prisma migrate dev --name init
 ```
+
+## Memo📝
+
+### 後でいかに改善予定
+
+```json
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "prisma generate && tsc",
+    "start": "node dist/index.js"
+  },
+```
