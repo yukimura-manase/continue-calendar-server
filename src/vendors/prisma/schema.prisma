@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+/**
+ * User Entity
+ * 1ユーザー : nゴール
+ * 1ユーザー : nカレンダー
+ */
+model User {
+  userId   String   @id @default(uuid(7)) // UUID v7を指定する。
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  goals     Goal[] // 1ユーザーに対して、複数の継続目標を持つ。
+  calendars Calendar[] // 1ユーザーに対して、複数のカレンダーを持つ。
+}
+
+
+/**
+ * Goal (継続目標) Entity
+ * User : Goal = 1 : n
+ * Goal : Calendar = 1 : 1
+ */
+model Goal {
+  goalId   String   @id @default(uuid(7)) // UUID v7を指定する。
+  userId   String
+  calendarId String? @unique // 1つのゴールに対して、1つのカレンダーを持つため、ユニーク制約を設定する。
+  title     String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade) // User とのリレーション (1:N)
+
+  // Goal : Calendar = 1:1
+  // Calendar側から「goalId」を unique 制約で参照する
+  calendar  Calendar?
+}
+
+
+/**
+ * Calendar Entity
+ * User : Calendar = 1:N
+ * Goal : Calendar = 1:1
+ */
+model Calendar {
+  calendarId String   @id @default(uuid(7)) // UUID v7を指定する。
+  userId     String
+  goalId     String @unique // 1つのゴールに対して、1つのカレンダーを持つため、ユニーク制約を設定する。
+  title       String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [userId])
+
+  // 1ゴールに対して、1つのカレンダーを持つ。
+  // Goal とのリレーション (1:1)
+  goal          Goal      @relation(fields: [goalId], references: [goalId], onDelete: Cascade)
+
+  // Calendar : CalendarDate = 1:N
+  calendarDates CalendarDate[]
+}
+
+
+/**
+ * Calendar Date Entity
+ * Calendar : CalendarDate = 1:N
+ * 
+ * 存在すれば、達成日を表す。
+ * 存在しなければ、未達成日を表す。
+ */
+model CalendarDate {
+  calendarDateId String   @id @default(uuid(7))
+  date            DateTime // 日付 (yyyy-MM-dd) で指定する。
+  createdAt       DateTime @default(now())
+
+  calendarId     String   // Calendar とのリレーション (1:N)
+  calendar        Calendar @relation(fields: [calendarId], references: [calendarId], onDelete: Cascade)
+}
