@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    // "module": "NodeNext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    // "moduleResolution": "node",
     "strict": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
