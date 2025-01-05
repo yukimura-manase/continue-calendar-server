@@ -12,11 +12,13 @@
     "@supabase/supabase-js": "^2.47.10",
     "dotenv": "^16.4.7",
     "hono": "^4.6.15",
-    "prisma": "^6.1.0"
+    "prisma": "^6.1.0",
+    "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
-    "tsx": "^4.7.1"
+    "tsx": "^4.7.1",
+    "typescript": "^5.7.2"
   },
   "prisma": {
     "schema": "src/vendors/prisma/schema.prisma"
